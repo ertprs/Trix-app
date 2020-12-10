@@ -1,0 +1,11 @@
+.navbar{
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    .burger-icon{
+        font-size: 40px;
+        color: #ffffff;
+    }
+}
