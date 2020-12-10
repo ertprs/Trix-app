@@ -4,6 +4,12 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 25px;
+    z-index: 100;
+    background-color: $secondary;
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    left: 0;
     .burger-icon{
         font-size: 40px;
         color: #ffffff;
