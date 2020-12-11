@@ -33,7 +33,7 @@ const Index = () => {
       .signInWithPhoneNumber(userInfo.phone, appVerifier)
       .then(function (confirmationResult) {
         console.log("Success");
-        setShowPass(true)
+        setShowPass(true);
         // SMS sent. Prompt user to type the code from the message, then sign the
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
@@ -44,18 +44,18 @@ const Index = () => {
   };
 
   const verifyNumber = () => {
-    
     const verificationId = userInfo.password;
     window.confirmationResult
       .confirm(verificationId)
-      .then(function(result) {
+      .then(function (result) {
         // User signed in successfully.
+        console.log("successfully signed in");
         var user = result.user;
-        user.getIdToken().then(idToken => {
-             console.log(idToken);
-          });
+        user.getIdToken().then((idToken) => {
+          console.log(idToken);
+        });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         // User couldn't sign in (bad verification code?)
         console.error("Error while checking the verification code", error);
         window.alert(
@@ -65,7 +65,7 @@ const Index = () => {
             error.message
         );
       });
-
+  };
   useEffect(() => {
     window.appVerifier = new firebase.auth.RecaptchaVerifier(
       "recaptcha-container",
@@ -107,13 +107,23 @@ const Index = () => {
           <div id="recaptcha-container"></div>
 
           <div>
-            <button
-              id="sign-in-btn"
-              className="btn btn-primary"
-              onClick={handleLogin}
-            >
-              Login
-            </button>
+            {showPass ? (
+              <button
+                id="sign-in-btn"
+                className="btn btn-primary"
+                onClick={verifyNumber}
+              >
+                Sign in
+              </button>
+            ) : (
+              <button
+                id="sign-in-btn"
+                className="btn btn-primary"
+                onClick={handleLogin}
+              >
+                Verify Number
+              </button>
+            )}
           </div>
           <p className="text-small switch">
             Don’t have an account?{" "}
