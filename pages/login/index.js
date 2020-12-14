@@ -2,22 +2,29 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../components/layout";
 import Link from "next/link";
 import firebase from "../../services/firebase";
+import { formatNumber } from "../../services/userService";
+import store from "../../store/store";
+import { useProxy } from "valtio";
+import { useRouter } from "next/router";
 
 const Index = () => {
+  const router = useRouter();
+  const snapshot = useProxy(store);
   const [userInfo, setInfo] = useState({
-    phone: "",
+    phone: snapshot.phone,
     password: "",
   });
-  const [showPass, setShowPass] = useState(false);
+  const [showPass, setShowPass] = useState(snapshot.showPass);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === "phone") {
-      // if (value.length <= 11) {
-      setInfo({
-        ...userInfo,
-        [name]: value,
-      });
-      // }
+      if (value.length <= 11) {
+        setInfo({
+          ...userInfo,
+          [name]: value,
+        });
+      }
     } else {
       setInfo({
         ...userInfo,
@@ -27,33 +34,41 @@ const Index = () => {
   };
 
   const handleLogin = () => {
+    store.loading = true;
     const appVerifier = window.appVerifier;
+    const phoneNumber = formatNumber(userInfo.phone);
     firebase
       .auth()
-      .signInWithPhoneNumber(userInfo.phone, appVerifier)
+      .signInWithPhoneNumber(phoneNumber, appVerifier)
       .then(function (confirmationResult) {
         console.log("Success");
         setShowPass(true);
         // SMS sent. Prompt user to type the code from the message, then sign the
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
+        store.loading = false;
       })
       .catch(function (error) {
         console.log("Error:" + error.code);
+        store.loading = false;
       });
   };
 
   const verifyNumber = () => {
+    store.loading = true;
     const verificationId = userInfo.password;
     window.confirmationResult
       .confirm(verificationId)
       .then(function (result) {
         // User signed in successfully.
-        console.log("successfully signed in");
+        console.log("successfully signed in", result.user);
         var user = result.user;
-        user.getIdToken().then((idToken) => {
-          console.log(idToken);
-        });
+
+        // user.getIdToken().then((idToken) => {
+        //   console.log(idToken);
+        // });
+        router.push("/dashboard");
+        store.loading = false;
       })
       .catch(function (error) {
         // User couldn't sign in (bad verification code?)
@@ -64,6 +79,7 @@ const Index = () => {
             "\n\n" +
             error.message
         );
+        store.loading = false;
       });
   };
   useEffect(() => {
@@ -75,6 +91,17 @@ const Index = () => {
     );
   }, []);
 
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        store.user = user;
+        router.push("/dashboard");
+      } else {
+        store.showLogin = true;
+      }
+    });
+  }, []);
+
   return (
     <Layout>
       <div className="register">
@@ -84,7 +111,7 @@ const Index = () => {
           <div className="phone-input">
             <p>+234</p>
             <input
-              type="text"
+              type="number"
               placeholder="Enter phone number"
               name="phone"
               value={userInfo.phone}
