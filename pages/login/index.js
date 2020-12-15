@@ -139,6 +139,7 @@ const Index = () => {
                 id="sign-in-btn"
                 className="btn btn-primary"
                 onClick={verifyNumber}
+                disabled={userInfo.phone === "" || userInfo.password === ""}
               >
                 Sign in
               </button>
@@ -147,6 +148,7 @@ const Index = () => {
                 id="sign-in-btn"
                 className="btn btn-primary"
                 onClick={handleLogin}
+                disabled={userInfo.phone === ""}
               >
                 Verify Number
               </button>

@@ -29,6 +29,10 @@ input{
 .btn-primary{
     background-color: $primary;
     width: 100%;
+    &:disabled{
+        background-color:lighten($color: $primary, $amount: 35);
+        cursor: not-allowed;
+    }
 }
 .heading{
     font-size: 35px;

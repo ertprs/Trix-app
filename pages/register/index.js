@@ -13,10 +13,12 @@ const Index = () => {
 
   const [userInfo, setInfo] = useState({
     phone: "",
+    acceptTerms: false,
+    error: "",
   });
 
   const handleRegister = () => {
-    store.loading = true;
+    
     const appVerifier = window.appVerifier;
     const phoneNumber = formatNumber(userInfo.phone);
     firebase
@@ -39,13 +41,41 @@ const Index = () => {
   };
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value, checked } = event.target;
+    if (event.target.type === "checkbox") {
+      setInfo({
+        ...userInfo,
+        [name]: checked,
+      });
+      
+      return;
+    }
     if (value.length <= 11) {
       setInfo({
         ...userInfo,
         [name]: value,
       });
     }
+  };
+
+  const validateInput = () => {
+    store.loading = true;
+    const { phone, acceptTerms } = userInfo;
+    setInfo({
+      ...userInfo,
+      error: "",
+    });
+    setTimeout(() => {
+      if (phone === "" || !acceptTerms) {
+        setInfo({
+          ...userInfo,
+          error: "Enter valid phone no. and accept terms to continue",
+        });
+        store.loading = false;
+        return;
+      }
+      handleRegister();
+    }, 1000);
   };
 
   useEffect(() => {
@@ -69,7 +99,6 @@ const Index = () => {
   }, []);
   return (
     <Layout>
-      
       <div className="register">
         <div id="recaptcha-container"></div>
         <div className="reg-form">
@@ -86,13 +115,19 @@ const Index = () => {
             />
           </div>
           <div className="terms">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              name="acceptTerms"
+              checked={userInfo.acceptTerms}
+              onChange={handleChange}
+            />
             <p>
               Accept our <a>terms & conditions</a>
             </p>
           </div>
+          <p className="error">{userInfo.error}</p>
           <div>
-            <button className="btn btn-primary" onClick={handleRegister}>
+            <button className="btn btn-primary" onClick={validateInput}>
               Proceed
             </button>
           </div>

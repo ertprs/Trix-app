@@ -5,6 +5,9 @@
     align-items: center;
     height: calc(100vh);
     text-align: left;
+    .error{
+        color: lighten($color: red, $amount: 20);
+    }
     .reg-form{
         width: 80%;
         .phone-input{
