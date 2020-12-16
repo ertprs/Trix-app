@@ -2,11 +2,13 @@ $primary: #028e29;
 $secondary: #011b33;
 
 body{
-    background-color: $secondary;
+    background-color: #171717;
     font-size: 18px;
     color: #ffffff;
 }
 
 @import "./helpers.scss";
 @import "./nav.scss";
-@import "./register.scss"
+@import "./register.scss";
+@import "./dashboard.scss";
+@import "./process.scss";

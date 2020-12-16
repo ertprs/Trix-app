@@ -1,0 +1,17 @@
+.loan-process{
+    height: 100%;
+    padding: 80px 0 20px 0;
+}
+.process{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .btn-holder{
+        display: flex;
+        justify-content: space-between;
+        button{
+            width: 130px;
+        }
+    }
+}
